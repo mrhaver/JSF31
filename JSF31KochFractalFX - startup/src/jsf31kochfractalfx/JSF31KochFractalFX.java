@@ -169,6 +169,9 @@ public class JSF31KochFractalFX extends Application {
         primaryStage.setTitle("Koch Fractal");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        //koch = new KochFractal();
+        //koch.addObserver(kochManager);
     }
     
     public void clearKochPanel() {
@@ -302,7 +305,7 @@ public class JSF31KochFractalFX extends Application {
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        launch(args);
+    public static void main(String[] args) {       
+        launch(args);   
     }
 }
