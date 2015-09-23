@@ -20,7 +20,6 @@ public class KochManager implements Observer{
     private JSF31KochFractalFX application;
     private KochFractal koch;
     private ArrayList<Edge> edges;
-    private TimeStamp ts;
     
     public KochManager(JSF31KochFractalFX application) {
         this.application = application;
@@ -31,23 +30,27 @@ public class KochManager implements Observer{
     
     public void changeLevel(int nxt) {
         koch.setLevel(nxt);
-        ts = new TimeStamp();
-        ts.setBegin("Begin Meting");
+        edges.clear();
+        TimeStamp tsb = new TimeStamp();
+        tsb.setBegin("Begin Berekenen");
+        koch.generateLeftEdge();
+        koch.generateBottomEdge();
+        koch.generateRightEdge();
+        tsb.setEnd("Fractal berekend");      
         drawEdges();
-        ts.setEnd("Fractal Getekend");
-        application.setTextCalc(ts.toString());
+        application.setTextCalc(tsb.toString());
         application.setTextNrEdges(String.valueOf(koch.getNrOfEdges()));
     }
     
     public void drawEdges() {
         application.clearKochPanel();
-        edges.clear();
-        koch.generateLeftEdge();
-        koch.generateBottomEdge();
-        koch.generateRightEdge();
+        TimeStamp tst = new TimeStamp();
+        tst.setBegin("Begin Tekenen");
         for(Edge e : edges){
             application.drawEdge(e);
         }
+        tst.setEnd("Fractal Getekend");
+        application.setTextDraw(tst.toString());
     }
 
     @Override
