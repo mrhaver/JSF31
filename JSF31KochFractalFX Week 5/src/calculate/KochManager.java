@@ -8,6 +8,8 @@ package calculate;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jsf31kochfractalfx.JSF31KochFractalFX;
 import timeutil.TimeStamp;
 
@@ -29,23 +31,25 @@ public class KochManager implements Observer{
         edges = new ArrayList<>();
     }
     
-    synchronized public void changeLevel(int nxt) throws InterruptedException {
-        count = 0;
-        koch.setLevel(nxt);
-        edges.clear();
-        TimeStamp tsb = new TimeStamp();
-        tsb.setBegin("Begin Berekenen");
-        Thread thrdleft = new Thread(new GenerateLeft(koch));
-        Thread thrdright = new Thread(new GenerateRight(koch));
-        Thread thrdbottom = new Thread(new GenerateBottom(koch));
-        thrdleft.start();
-        thrdright.start();
-        thrdbottom.start();
-        tsb.setEnd("Fractal berekend");
-        wait();
-        drawEdges();
-        application.setTextCalc(tsb.toString());
-        application.setTextNrEdges(String.valueOf(koch.getNrOfEdges()));
+    /**
+     *
+     * @param nxt
+     */
+    synchronized public void changeLevel(int nxt) {
+            count = 0;
+            koch.setLevel(nxt);
+            edges.clear();
+            TimeStamp tsb = new TimeStamp();
+            tsb.setBegin("Begin Berekenen");
+            Thread thrdleft = new Thread(new GenerateLeft(koch, this));
+            Thread thrdright = new Thread(new GenerateRight(koch, this));
+            Thread thrdbottom = new Thread(new GenerateBottom(koch, this));
+            thrdleft.start();
+            thrdright.start();
+            thrdbottom.start();
+            tsb.setEnd("Fractal berekend");
+            application.setTextCalc(tsb.toString());
+            application.setTextNrEdges(String.valueOf(koch.getNrOfEdges()));
     }
     
     public void drawEdges() {
@@ -62,7 +66,7 @@ public class KochManager implements Observer{
     @Override
     public void update(Observable o, Object arg) {
         //application.drawEdge((Edge)arg);
-        edges.add((Edge)arg);
+        //edges.add((Edge)arg);
     }
     
     synchronized public void IncreaseCount(){

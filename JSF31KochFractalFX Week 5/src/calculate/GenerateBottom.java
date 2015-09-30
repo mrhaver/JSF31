@@ -8,6 +8,7 @@ package calculate;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import jsf31kochfractalfx.JSF31KochFractalFX;
 
 /**
  *
@@ -15,24 +16,27 @@ import java.util.Observer;
  */
 public class GenerateBottom implements Runnable, Observer{
     private KochFractal koch;
-    private KochManager km = new KochManager(null);
+    private KochManager km;
     
-    public GenerateBottom(KochFractal koch){
+    public GenerateBottom(KochFractal koch, KochManager km){
         this.koch = koch;
-        this.koch.addObserver(this);
+        koch.addObserver(this);
+        this.km = km;
     }
     @Override
     synchronized public void run() {
         koch.generateBottomEdge();
-        km.IncreaseCount();
-        if(km.count == 3){
-            notify();
-        }
+        
+        
     }
 
     @Override
-    synchronized public void update(Observable o, Object arg) {
+    synchronized public void update(Observable o, Object arg) {       
         km.edges.add((Edge)arg);
+        km.IncreaseCount();
+        if(km.count == 3){
+            km.drawEdges();
+        }
         
     }
     

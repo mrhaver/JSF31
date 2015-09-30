@@ -8,6 +8,7 @@ package calculate;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import jsf31kochfractalfx.JSF31KochFractalFX;
 
 /**
  *
@@ -15,25 +16,27 @@ import java.util.Observer;
  */
 public class GenerateRight implements Runnable, Observer{
     private KochFractal koch;
-    private KochManager km = new KochManager(null);
+    private KochManager km;
+
     
-    public GenerateRight(KochFractal koch){
+    public GenerateRight(KochFractal koch, KochManager km){
         this.koch = koch;
         this.koch.addObserver(this);
+        this.km = km;
+
     }
     @Override
     synchronized public void run() {
-        koch.generateRightEdge();
-        km.IncreaseCount();
-        if(km.count == 3){
-            notify();
-        }
+        koch.generateRightEdge();       
     }
 
     @Override
     synchronized public void update(Observable o, Object arg) {
         km.edges.add((Edge)arg);
-        
+        km.IncreaseCount();
+        if(km.count == 3){
+            km.drawEdges();
+        }
     }
     
 }
