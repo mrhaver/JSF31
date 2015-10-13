@@ -144,7 +144,13 @@ public class JSF31KochFractalFX extends Application {
         buttonFitFractal.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                fitFractalButtonActionPerformed(event);
+                try {
+                    fitFractalButtonActionPerformed(event);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ExecutionException ex) {
+                    Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         grid.add(buttonFitFractal, 14, 6);
@@ -154,7 +160,13 @@ public class JSF31KochFractalFX extends Application {
             new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    kochPanelMouseClicked(event);
+                    try {
+                        kochPanelMouseClicked(event);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ExecutionException ex) {
+                        Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             });
         
@@ -171,7 +183,13 @@ public class JSF31KochFractalFX extends Application {
         kochPanel.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                kochPanelMouseDragged(event);
+                try {
+                    kochPanelMouseDragged(event);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ExecutionException ex) {
+                    Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         
@@ -245,7 +263,11 @@ public class JSF31KochFractalFX extends Application {
         Platform.runLater(new Runnable(){
             @Override
             public void run() {
-                kochManager.drawEdges();
+                try {
+                    kochManager.drawEdges();
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -268,12 +290,12 @@ public class JSF31KochFractalFX extends Application {
         }
     } 
 
-    private void fitFractalButtonActionPerformed(ActionEvent event) {
+    private void fitFractalButtonActionPerformed(ActionEvent event) throws InterruptedException, ExecutionException {
         resetZoom();
         kochManager.drawEdges();
     }
     
-    private void kochPanelMouseClicked(MouseEvent event) {
+    private void kochPanelMouseClicked(MouseEvent event) throws InterruptedException, ExecutionException {
         if (Math.abs(event.getX() - startPressedX) < 1.0 && 
             Math.abs(event.getY() - startPressedY) < 1.0) {
             double originalPointClickedX = (event.getX() - zoomTranslateX) / zoom;
@@ -289,7 +311,7 @@ public class JSF31KochFractalFX extends Application {
         }
     }                                      
 
-    private void kochPanelMouseDragged(MouseEvent event) {
+    private void kochPanelMouseDragged(MouseEvent event) throws InterruptedException, ExecutionException {
         zoomTranslateX = zoomTranslateX + event.getX() - lastDragX;
         zoomTranslateY = zoomTranslateY + event.getY() - lastDragY;
         lastDragX = event.getX();

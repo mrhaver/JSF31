@@ -47,6 +47,7 @@ public class GenerateBottom implements Observer, Callable<ArrayList<Edge>>{
         koch.generateBottomEdge();
         cb.await();
         tsb.setEnd("Eind Berekenen");
+        application.requestDrawEdges();
         application.setTextCalc(tsb.toString());
         return edges;
     }

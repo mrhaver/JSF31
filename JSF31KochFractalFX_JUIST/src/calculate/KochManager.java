@@ -29,6 +29,10 @@ public class KochManager{
     private KochFractal koch;
     private ArrayList<Edge> edges;
     private int counter = 0;
+    ExecutorService pool;
+    Future<ArrayList<Edge>> bottomEdges;
+    Future<ArrayList<Edge>> rightEdges;
+    Future<ArrayList<Edge>> leftEdges;
     
     
     public KochManager(JSF31KochFractalFX application) {
@@ -40,6 +44,7 @@ public class KochManager{
     
     synchronized public void changeLevel(int nxt) throws InterruptedException, ExecutionException, BrokenBarrierException {
         final CyclicBarrier cb = new CyclicBarrier(3);
+        pool = Executors.newFixedThreadPool(3);
         koch.setLevel(nxt);
         edges.clear();
         TimeStamp tsb = new TimeStamp();        
@@ -47,11 +52,14 @@ public class KochManager{
         GenerateLeft genLeft = new GenerateLeft(this, application, nxt, tsb,cb);
         GenerateBottom genBottom = new GenerateBottom(this, application, nxt, tsb,cb);
         tsb.setBegin("Begin Berekenen");
-        ExecutorService pool = Executors.newCachedThreadPool();
-        Future<ArrayList<Edge>> bottomEdges = pool.submit(genBottom);
-        Future<ArrayList<Edge>> rightEdges = pool.submit(genRight);
-        Future<ArrayList<Edge>> leftEdges = pool.submit(genLeft);
+        bottomEdges = pool.submit(genBottom);
+        rightEdges = pool.submit(genRight);
+        leftEdges = pool.submit(genLeft);
         
+    }
+    
+    public void drawEdges() throws InterruptedException, ExecutionException {
+        pool.shutdown();
         for(Edge e : bottomEdges.get()){
             edges.add(e);
         }
@@ -63,17 +71,8 @@ public class KochManager{
         for(Edge e : rightEdges.get()){
             edges.add(e);
         }
-        pool.shutdown();
-        application.requestDrawEdges();
-        
-        //tLeft.start();
-        //tRight.start();
-        //tBottom.start();
         System.out.println(String.valueOf(edges.size()));  
         application.setTextNrEdges(String.valueOf(koch.getNrOfEdges()));
-    }
-    
-    public void drawEdges() {
         application.clearKochPanel();
         TimeStamp tst = new TimeStamp();
         tst.setBegin("Begin Tekenen");
