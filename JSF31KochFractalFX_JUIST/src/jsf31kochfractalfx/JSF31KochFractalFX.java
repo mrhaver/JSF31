@@ -5,6 +5,7 @@
 package jsf31kochfractalfx;
 
 import calculate.*;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,7 +61,7 @@ public class JSF31KochFractalFX extends Application {
     private final int kpHeight = 500;
     
     @Override
-    public void start(Stage primaryStage) throws InterruptedException, ExecutionException {
+    public void start(Stage primaryStage) throws InterruptedException, ExecutionException, BrokenBarrierException {
        
         // Define grid pane
         GridPane grid;
@@ -111,6 +112,8 @@ public class JSF31KochFractalFX extends Application {
                     Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ExecutionException ex) {
                     Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (BrokenBarrierException ex) {
+                    Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
@@ -127,6 +130,8 @@ public class JSF31KochFractalFX extends Application {
                 } catch (InterruptedException ex) {
                     Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ExecutionException ex) {
+                    Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (BrokenBarrierException ex) {
                     Logger.getLogger(JSF31KochFractalFX.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -245,7 +250,7 @@ public class JSF31KochFractalFX extends Application {
         });
     }
     
-    private void increaseLevelButtonActionPerformed(ActionEvent event) throws InterruptedException, ExecutionException {
+    private void increaseLevelButtonActionPerformed(ActionEvent event) throws InterruptedException, ExecutionException, BrokenBarrierException {
         if (currentLevel < 12) {
             // resetZoom();
             currentLevel++;
@@ -254,7 +259,7 @@ public class JSF31KochFractalFX extends Application {
         }
     } 
     
-    private void decreaseLevelButtonActionPerformed(ActionEvent event) throws InterruptedException, ExecutionException {
+    private void decreaseLevelButtonActionPerformed(ActionEvent event) throws InterruptedException, ExecutionException, BrokenBarrierException {
         if (currentLevel > 1) {
             // resetZoom();
             currentLevel--;
