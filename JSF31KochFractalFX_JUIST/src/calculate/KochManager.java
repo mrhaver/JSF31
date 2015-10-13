@@ -8,6 +8,12 @@ package calculate;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jsf31kochfractalfx.JSF31KochFractalFX;
@@ -24,6 +30,7 @@ public class KochManager{
     private ArrayList<Edge> edges;
     private int counter = 0;
     
+    
     public KochManager(JSF31KochFractalFX application) {
         this.application = application;
         edges = new ArrayList<>();
@@ -31,28 +38,38 @@ public class KochManager{
         counter = 0;
     }
     
-    synchronized public void changeLevel(int nxt) {
+    synchronized public void changeLevel(int nxt) throws InterruptedException, ExecutionException, BrokenBarrierException {
+        final CyclicBarrier cb = new CyclicBarrier(3);
         koch.setLevel(nxt);
         edges.clear();
         TimeStamp tsb = new TimeStamp();        
-        Thread tRight = new Thread(new GenerateRight(this, application, nxt, tsb));
-        Thread tLeft = new Thread(new GenerateLeft(this, application, nxt, tsb));
-        Thread tBottom = new Thread(new GenerateBottom(this, application, nxt, tsb));
+        GenerateRight genRight = new GenerateRight(this, application, nxt, tsb,cb);
+        GenerateLeft genLeft = new GenerateLeft(this, application, nxt, tsb,cb);
+        GenerateBottom genBottom = new GenerateBottom(this, application, nxt, tsb,cb);
         tsb.setBegin("Begin Berekenen");
-        tLeft.start();
-        tRight.start();
-        tBottom.start();         
-//        try {
-//            tRight.join();
-//            tLeft.join();
-//            tBottom.join();
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(KochManager.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        System.out.println(String.valueOf(edges.size()));
-//        koch.generateLeftEdge();
-//        koch.generateBottomEdge();
-//        koch.generateRightEdge();     
+        ExecutorService pool = Executors.newCachedThreadPool();
+        Future<ArrayList<Edge>> bottomEdges = pool.submit(genBottom);
+        Future<ArrayList<Edge>> rightEdges = pool.submit(genRight);
+        Future<ArrayList<Edge>> leftEdges = pool.submit(genLeft);
+        
+        for(Edge e : bottomEdges.get()){
+            edges.add(e);
+        }
+        
+        for(Edge e : leftEdges.get()){
+            edges.add(e);
+        }
+        
+        for(Edge e : rightEdges.get()){
+            edges.add(e);
+        }
+        pool.shutdown();
+        application.requestDrawEdges();
+        
+        //tLeft.start();
+        //tRight.start();
+        //tBottom.start();
+        System.out.println(String.valueOf(edges.size()));  
         application.setTextNrEdges(String.valueOf(koch.getNrOfEdges()));
     }
     
