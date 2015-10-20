@@ -43,10 +43,14 @@ public class BallRunnable implements Runnable {
                 Thread.sleep(ball.getSpeed());
                 
             } catch (InterruptedException ex) {
-                if(ball.getXPos() <= ball.getMaxCsX() && ball.getXPos() >= ball.getMinCsX()){
+                if(ball.getXPos() == ball.getMinCsX() && ball.getColor() == Color.BLUE){
+                    monitor.decreaseWritersWaiting();
+                }
+                if(ball.getXPos() <= ball.getMaxCsX() && ball.getXPos() > ball.getMinCsX()){
                     if(ball.getColor() == Color.BLUE){
                         try {
                             monitor.exitWriter();
+                            
                         } catch (InterruptedException ex1) {
                             System.out.println(ex1.toString());
                         }

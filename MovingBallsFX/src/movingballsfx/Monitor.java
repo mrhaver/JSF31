@@ -86,4 +86,8 @@ public class Monitor {
             monLock.unlock();
         }
     }
+    
+    public void decreaseWritersWaiting(){
+        writersWaiting--;
+    }
 }
